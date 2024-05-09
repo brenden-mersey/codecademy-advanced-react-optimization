@@ -1,41 +1,46 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import useToggle from '../../hooks/useToggle';
 import { ProfileContext } from '../../providers/ProfileProvider';
 import { checkUsernameValidity } from './checkUsernameValidity.js';
-import getIconOptions from './getIconOptions';
 
 import styles from './Profile.module.css';
 
 const Profile = () => {
+
   const {
     currentUser: { name, icon },
     setCurrentUser,
   } = useContext(ProfileContext);
+
   const [showEditForm, toggleShowEditForm] = useToggle(false);
-  const [showUsernameValidation, toggleShowUsernameValidation] =
-    useToggle(false);
+  const [showUsernameValidation, toggleShowUsernameValidation] = useToggle(false);
   const [username, setUsername] = useState(name);
   const [iconOptions, setIconOptions] = useState();
 
+  const isUsernameValid = useMemo(() => {
+    checkUsernameValidity(name);
+  }, [ username ] );
+
   useEffect(() => {
-    const load = () => {
-      const userIconOptions = getIconOptions();
+    const load = async () => {
+      const getIconOptions = await import('./getIconOptions');
+      const userIconOptions = getIconOptions.default();
       setIconOptions(userIconOptions);
     };
-
     load();
   }, []);
 
-  const isUsernameValid = checkUsernameValidity(name);
-
   const onSaveProfile = (e) => {
+
     e.preventDefault();
 
     setCurrentUser({
       name: e.target.username.value,
       icon: e.target.icon.value,
     });
+
     toggleShowEditForm();
+
   };
 
   const onToggleUsernameValidation = (e) => {

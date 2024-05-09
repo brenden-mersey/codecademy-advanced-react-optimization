@@ -6,6 +6,7 @@ import styles from './Todos.module.css';
 
 // After: Memoizing components
 const TodoItem = React.memo((props) => {
+
   const {
     todo,
     animationsEnabled,
@@ -63,6 +64,7 @@ const TodoItem = React.memo((props) => {
       </div>
     </li>
   );
+
 });
 
 export default TodoItem;
